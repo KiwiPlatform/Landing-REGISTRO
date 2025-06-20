@@ -1,0 +1,233 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    background-color: #0e3339;
+    font-family: var(--font-halyard);
+}
+
+.section-1 {
+    width: 30%;
+    margin: 40px auto;
+    padding: 32px 32px 24px 32px;
+    border-radius: 8px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+}
+
+.section-1 h3 {
+    color: #fff;
+    text-align: left;
+    margin-bottom: 24px;
+    font-size: 2rem;
+    font-weight: 600;
+    font-family: var(--font-gelica);
+}
+
+.section-1 form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.section-1 label {
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.section-1 input[type="text"],
+.section-1 input[type="number"],
+.section-1 input[type="tel"],
+.section-1 input[type="email"],
+.section-1 select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 5px;
+    border: 1px solid #b9d1cf;
+    background-color: #b9d1cf;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    box-sizing: border-box;
+    color: #222;
+    outline: none;
+    transition: border 0.2s, background 0.2s;
+}
+
+.section-1 input:focus {
+    border: 1.5px solid #388e3c;
+}
+
+.section-1 input[type="text"]:hover,
+.section-1 input[type="number"]:hover,
+.section-1 input[type="tel"]:hover,
+.section-1 input[type="email"]:hover,
+.section-1 select:hover {
+    background-color: #fff;
+}
+
+.section-1 button[type="submit"] {
+    margin-top: 12px;
+    padding: 15px 0;
+    width: 30%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    background: #38f2ab;
+    color: #111;
+    border: none;
+    border-radius: 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.section-1 button[type="submit"]:hover {
+    background: #72b685;
+    color: #111;
+}
+
+.main-logo {
+    display: block;
+    width: 150px;
+    margin: 20px auto;
+}
+
+.section-2 {
+    width: 100%;
+    margin: 40px auto;
+    background-color: #38f2ab; /* Verde limón */
+    color: #000;
+    padding: 24px 32px;
+    border-radius: 8px;
+}
+
+.section-2-container {
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: auto;
+}
+
+.section-2-container > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.section-2-container > div:last-child {
+    align-items: flex-end;
+}
+
+.footer-logo {
+    width: 120px;
+}
+
+.section-2-container a,
+.section-2-container p {
+    color: #000;
+    text-decoration: none;
+    margin: 0;
+}
+
+.section-2-container a:hover {
+    text-decoration: underline;
+}
+
+.section-2-container i {
+    font-size: 1.5rem;
+}
+
+/* --- Responsive Styles --- */
+
+/* Tablets & Small Desktops */
+@media (max-width: 1024px) {
+    .section-1 {
+        width: 60%;
+    }
+
+    .section-2-container {
+        width: 90%;
+    }
+}
+
+/* Mobile Devices */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+    
+    main {
+        padding: 0 16px;
+    }
+
+    .section-1 {
+        width: 90%;
+        padding: 24px;
+    }
+
+    .section-1 h3 {
+        font-size: 1.5rem;
+    }
+
+    .section-1 button[type="submit"] {
+        width: 60%;
+        font-size: 1rem;
+    }
+
+    .section-2 {
+        padding: 24px 16px;
+    }
+
+    .section-2-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 24px;
+    }
+
+    .section-2-container > div {
+        flex-direction: row; /* Revert to row for better layout */
+        align-items: center;
+    }
+
+    .section-2-container > div:last-child {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+    .section-1 {
+        width: 100%;
+        padding: 20px;
+        margin: 20px auto;
+    }
+
+    .section-1 button[type="submit"] {
+        width: 80%;
+    }
+    
+    .main-logo {
+        width: 120px;
+        margin: 15px auto;
+    }
+
+    .section-2-container {
+        width: 100%;
+    }
+}
+
+:root {
+    --font-gelica: 'gelica-sans-serif', Arial, sans-serif;
+    --font-halyard: 'halyard-display', Arial, sans-serif;
+}
