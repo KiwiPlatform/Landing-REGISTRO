@@ -22,7 +22,7 @@
                     <label for="cliente">Nombres y Apellidos Cliente</label>
                     <input type="text" id="cliente" name="cliente" required pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{3,}" title="Solo letras y espacios, mínimo 3 caracteres">
 
-                    <label for="clinica">Clínica <span style="color:red">*</span></label>
+                    <label for="clinica">Clínica <span style="color: rgb(155, 152, 152)">(obligatorio)</span></label>
                     <select id="clinica" name="clinica" required>
                         <option value="" disabled selected hidden>Selecciona una opcion</option>
                         <option value="clinica_a">Clínica A</option>
@@ -32,7 +32,7 @@
                         <option value="clinica_e">Clínica E</option>
                     </select>
 
-                    <label for="especialidad">Especialidad Médica de Interés <span style="color:red">*</span></label>
+                    <label for="especialidad">Especialidad Médica de Interés <span style="color: rgb(155, 152, 152)">(obligatorio)</span></label>
                     <select id="especialidad" name="especialidad" required>
                         <option value="" disabled selected hidden>Selecciona una opcion</option>
                         <option value="cardiologia">Cardiología</option>
@@ -42,16 +42,16 @@
                         <option value="traumatologia">Traumatología</option>
                     </select>
 
-                    <label for="dni">N° DNI <span style="color:red">*</span></label>
+                    <label for="dni">N° DNI <span style="color: rgb(155, 152, 152)">(obligatorio)</span></label>
                     <input type="text" id="dni" name="dni" required pattern="\d{8}" maxlength="8" minlength="8" title="Debe tener 8 dígitos">
 
-                    <label for="ingreso">Ingreso Mensual Promedio S/. <span style="color:red">*</span></label>
+                    <label for="ingreso">Ingreso Mensual Promedio S/. <span style="color:rgb(155, 152, 152)">(obligatorio)</span></label>
                     <input type="number" id="ingreso" name="ingreso" required min="0" step="0.01" title="Ingrese un monto válido">
 
-                    <label for="costo">Costo Apróx. Tratamiento S/. <span style="color:red">*</span></label>
+                    <label for="costo">Costo Apróx. Tratamiento S/. <span style="color: rgb(155, 152, 152)">(obligatorio)</span></label>
                     <input type="number" id="costo" name="costo" required min="0" step="0.01" title="Ingrese un monto válido">
 
-                    <label for="telefono">Teléfono <span style="color:red">*</span></label>
+                    <label for="telefono">Teléfono <span style="color: rgb(155, 152, 152)">(obligatorio)</span></label>
                     <input type="tel" id="telefono" name="telefono" required pattern="[0-9]{9}" maxlength="9" minlength="9" title="Debe tener 9 dígitos">
 
                     <label for="correo">Correo electrónico (Opcional)</label>
@@ -79,10 +79,16 @@
         </section>
     </main>
 
+    <!-- Cargar configuración de variables de entorno -->
+    <script src="./env-loader.js"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('treatment-form');
             const messageEl = document.getElementById('form-message');
+
+            // Usar configuración desde variables de entorno
+            const config = window.config;
 
             form.addEventListener('submit', async function (event) {
                 event.preventDefault(); 
@@ -99,11 +105,12 @@
                     correo: document.getElementById('correo').value,
                 };
 
-                const apiEndpoint = 'https://api.example.com/lead'; // <-- ¡IMPORTANTE! Cambia esta URL por la de tu API
+                // Usar endpoint desde configuración
+                const apiEndpoint = config.API_ENDPOINT;
 
                 try {
-                    messageEl.textContent = 'Enviando...';
-                    messageEl.style.color = '#fff';
+                    messageEl.textContent = config.MESSAGES.SENDING;
+                    messageEl.style.color = config.COLORS.DEFAULT;
 
                     const response = await fetch(apiEndpoint, {
                         method: 'POST',
@@ -114,20 +121,20 @@
                     });
 
                     if (response.ok) {
-                        messageEl.textContent = '¡Datos enviados con éxito!';
-                        messageEl.style.color = '#a5d6a7';
+                        messageEl.textContent = config.MESSAGES.SUCCESS;
+                        messageEl.style.color = config.COLORS.SUCCESS;
                         form.reset();
                     } else {
-                        throw new Error(`Error en la solicitud: ${response.statusText}`);
+                        throw new Error(`${config.MESSAGES.ERROR_DETAIL} ${response.statusText}`);
                     }
                 } catch (error) {
                     console.error('Error al enviar el formulario:', error);
-                    messageEl.textContent = 'Error al enviar. Inténtalo de nuevo.';
-                    messageEl.style.color = '#ff8a80';
+                    messageEl.textContent = config.MESSAGES.ERROR;
+                    messageEl.style.color = config.COLORS.ERROR;
                 } finally {
                     setTimeout(() => {
                         messageEl.textContent = '';
-                    }, 5000);
+                    }, config.MESSAGE_TIMEOUT);
                 }
             });
         });
