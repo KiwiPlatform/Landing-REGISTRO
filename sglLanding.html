@@ -24,22 +24,12 @@
 
                     <label for="clinica">Clínica <span style="color: rgb(155, 152, 152)">(obligatorio)</span></label>
                     <select id="clinica" name="clinica" required>
-                        <option value="" disabled selected hidden>Selecciona una opcion</option>
-                        <option value="clinica_a">Clínica A</option>
-                        <option value="clinica_b">Clínica B</option>
-                        <option value="clinica_c">Clínica C</option>
-                        <option value="clinica_d">Clínica D</option>
-                        <option value="clinica_e">Clínica E</option>
+                        <option value="" disabled selected hidden>Cargando clínicas...</option>
                     </select>
 
                     <label for="especialidad">Especialidad Médica de Interés <span style="color: rgb(155, 152, 152)">(obligatorio)</span></label>
                     <select id="especialidad" name="especialidad" required>
-                        <option value="" disabled selected hidden>Selecciona una opcion</option>
-                        <option value="cardiologia">Cardiología</option>
-                        <option value="dermatologia">Dermatología</option>
-                        <option value="odontologia">Odontología</option>
-                        <option value="ginecologia">Ginecología</option>
-                        <option value="traumatologia">Traumatología</option>
+                        <option value="" disabled selected hidden>Cargando especialidades...</option>
                     </select>
 
                     <label for="dni">N° DNI <span style="color: rgb(155, 152, 152)">(obligatorio)</span></label>
@@ -83,17 +73,119 @@
     <script src="./env-loader.js"></script>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', async function () {
             const form = document.getElementById('treatment-form');
             const messageEl = document.getElementById('form-message');
 
             // Usar configuración desde variables de entorno
             const config = window.config;
 
+            // Cargar clínicas y especialidades al inicio
+            await cargarClinicas();
+            await cargarEspecialidades();
+
+            async function cargarClinicas() {
+                try {
+                    console.log('🔍 Cargando clínicas desde:', config.CLINICS_ENDPOINT);
+                    const response = await fetch(config.CLINICS_ENDPOINT);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log('📋 Respuesta completa de clínicas:', data);
+                    
+                    // Manejar diferentes formatos de respuesta
+                    let clinicas = [];
+                    if (Array.isArray(data)) {
+                        clinicas = data;
+                    } else if (data.content && Array.isArray(data.content)) {
+                        clinicas = data.content; // Respuesta paginada
+                    } else if (data.data && Array.isArray(data.data)) {
+                        clinicas = data.data; // Respuesta envuelta
+                    } else if (data.clinics && Array.isArray(data.clinics)) {
+                        clinicas = data.clinics;
+                    } else {
+                        console.error('❌ Formato de respuesta no reconocido para clínicas:', data);
+                        throw new Error('Formato de respuesta de clínicas no válido');
+                    }
+                    
+                    const selectClinica = document.getElementById('clinica');
+                    // Limpiar y agregar placeholder
+                    selectClinica.innerHTML = '<option value="" disabled selected hidden>Selecciona una clínica</option>';
+                    
+                    // Agregar clínicas activas
+                    const clinicasActivas = clinicas.filter(clinica => clinica.active === true);
+                    clinicasActivas.forEach(clinica => {
+                        const option = new Option(clinica.name, clinica.id);
+                        selectClinica.add(option);
+                    });
+                    
+                    console.log(`✅ Cargadas ${clinicasActivas.length} clínicas de ${clinicas.length} totales`);
+                } catch (error) {
+                    console.error('❌ Error cargando clínicas:', error);
+                    const selectClinica = document.getElementById('clinica');
+                    selectClinica.innerHTML = '<option value="" disabled selected>Error cargando clínicas</option>';
+                }
+            }
+
+            async function cargarEspecialidades() {
+                try {
+                    console.log('🔍 Cargando especialidades desde:', config.SPECIALTIES_ENDPOINT);
+                    const response = await fetch(config.SPECIALTIES_ENDPOINT);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log('📋 Respuesta completa de especialidades:', data);
+                    
+                    // Manejar diferentes formatos de respuesta
+                    let especialidades = [];
+                    if (Array.isArray(data)) {
+                        especialidades = data;
+                    } else if (data.content && Array.isArray(data.content)) {
+                        especialidades = data.content; // Respuesta paginada
+                    } else if (data.data && Array.isArray(data.data)) {
+                        especialidades = data.data; // Respuesta envuelta
+                    } else if (data.specialties && Array.isArray(data.specialties)) {
+                        especialidades = data.specialties;
+                    } else {
+                        console.error('❌ Formato de respuesta no reconocido para especialidades:', data);
+                        throw new Error('Formato de respuesta de especialidades no válido');
+                    }
+                    
+                    const selectEspecialidad = document.getElementById('especialidad');
+                    // Limpiar y agregar placeholder
+                    selectEspecialidad.innerHTML = '<option value="" disabled selected hidden>Selecciona una especialidad</option>';
+                    
+                    // Agregar especialidades activas
+                    const especialidadesActivas = especialidades.filter(especialidad => especialidad.active === true);
+                    especialidadesActivas.forEach(especialidad => {
+                        // Mostrar nombre y categoría para mejor comprensión
+                        const textoOpcion = especialidad.category && especialidad.category !== especialidad.name 
+                            ? `${especialidad.name} - ${especialidad.category}`
+                            : especialidad.name;
+                        
+                        const option = new Option(textoOpcion, especialidad.id);
+                        selectEspecialidad.add(option);
+                    });
+                    
+                    console.log(`✅ Cargadas ${especialidadesActivas.length} especialidades de ${especialidades.length} totales`);
+                } catch (error) {
+                    console.error('❌ Error cargando especialidades:', error);
+                    const selectEspecialidad = document.getElementById('especialidad');
+                    selectEspecialidad.innerHTML = '<option value="" disabled selected>Error cargando especialidades</option>';
+                }
+            }
+
             form.addEventListener('submit', async function (event) {
                 event.preventDefault(); 
 
-                const formData = {
+                // Obtener valores sin procesar para debugging
+                const valoresCrudos = {
                     recepcionista: document.getElementById('recepcionista').value,
                     cliente: document.getElementById('cliente').value,
                     clinica: document.getElementById('clinica').value,
@@ -105,8 +197,86 @@
                     correo: document.getElementById('correo').value,
                 };
 
+                console.log('🔍 Valores crudos del formulario:', valoresCrudos);
+
+                // Validar que los campos requeridos no estén vacíos
+                if (!valoresCrudos.recepcionista || valoresCrudos.recepcionista.trim().length < 3) {
+                    messageEl.textContent = 'El nombre del recepcionista debe tener al menos 3 caracteres';
+                    messageEl.style.color = config.COLORS.ERROR;
+                    return;
+                }
+
+                if (!valoresCrudos.cliente || valoresCrudos.cliente.trim().length < 3) {
+                    messageEl.textContent = 'El nombre del cliente debe tener al menos 3 caracteres';
+                    messageEl.style.color = config.COLORS.ERROR;
+                    return;
+                }
+
+                if (!valoresCrudos.clinica || valoresCrudos.clinica === '') {
+                    messageEl.textContent = 'Debe seleccionar una clínica';
+                    messageEl.style.color = config.COLORS.ERROR;
+                    return;
+                }
+
+                if (!valoresCrudos.especialidad || valoresCrudos.especialidad === '') {
+                    messageEl.textContent = 'Debe seleccionar una especialidad';
+                    messageEl.style.color = config.COLORS.ERROR;
+                    return;
+                }
+
+                // Validar montos mínimos
+                const ingreso = parseFloat(valoresCrudos.ingreso);
+                const costo = parseFloat(valoresCrudos.costo);
+
+                if (isNaN(ingreso) || ingreso <= 0) {
+                    messageEl.textContent = 'El ingreso mensual debe ser mayor a 0';
+                    messageEl.style.color = config.COLORS.ERROR;
+                    return;
+                }
+
+                if (isNaN(costo) || costo <= 0) {
+                    messageEl.textContent = 'El costo del tratamiento debe ser mayor a 0';
+                    messageEl.style.color = config.COLORS.ERROR;
+                    return;
+                }
+
+                if (ingreso < 100) {
+                    messageEl.textContent = 'El ingreso mensual parece muy bajo. ¿Está seguro?';
+                    messageEl.style.color = config.COLORS.ERROR;
+                    return;
+                }
+
+                if (costo < 50) {
+                    messageEl.textContent = 'El costo del tratamiento parece muy bajo. ¿Está seguro?';
+                    messageEl.style.color = config.COLORS.ERROR;
+                    return;
+                }
+
+                // Validar DNI único (sugerir uno diferente si es de prueba)
+                if (valoresCrudos.dni === '12345678') {
+                    const randomDni = Math.floor(10000000 + Math.random() * 90000000).toString();
+                    console.log(`💡 Sugerencia: El DNI ${valoresCrudos.dni} podría estar duplicado. Prueba con: ${randomDni}`);
+                }
+
+                // Preparar datos para envío
+                const formData = {
+                    receptionistName: valoresCrudos.recepcionista.trim(),
+                    clientName: valoresCrudos.cliente.trim(),
+                    clinicId: parseInt(valoresCrudos.clinica),
+                    medicalSpecialtyId: parseInt(valoresCrudos.especialidad),
+                    dni: valoresCrudos.dni.trim(),
+                    monthlyIncome: parseFloat(valoresCrudos.ingreso),
+                    treatmentCost: parseFloat(valoresCrudos.costo),
+                    phone: valoresCrudos.telefono.trim(),
+                    email: valoresCrudos.correo.trim() || null
+                };
+
+                console.log('📤 Datos finales a enviar:', formData);
+                console.log('📤 Datos finales como JSON string:', JSON.stringify(formData, null, 2));
+
                 // Usar endpoint desde configuración
                 const apiEndpoint = config.API_ENDPOINT;
+                console.log('🎯 Enviando a endpoint:', apiEndpoint);
 
                 try {
                     messageEl.textContent = config.MESSAGES.SENDING;
@@ -120,15 +290,56 @@
                         body: JSON.stringify(formData),
                     });
 
+                    console.log('📊 Status de respuesta:', response.status);
+                    console.log('📊 Headers de respuesta:', response.headers);
+
                     if (response.ok) {
+                        const responseData = await response.json();
+                        console.log('✅ Respuesta exitosa:', responseData);
+                        
                         messageEl.textContent = config.MESSAGES.SUCCESS;
                         messageEl.style.color = config.COLORS.SUCCESS;
                         form.reset();
+                        // Recargar las opciones después del reset
+                        await cargarClinicas();
+                        await cargarEspecialidades();
                     } else {
-                        throw new Error(`${config.MESSAGES.ERROR_DETAIL} ${response.statusText}`);
+                        const errorData = await response.text();
+                        console.error('❌ Error completo de la API:', errorData);
+                        
+                        // Intentar parsear como JSON para mejor información
+                        try {
+                            const errorJson = JSON.parse(errorData);
+                            console.error('❌ Error parseado:', errorJson);
+                            
+                            if (errorJson.details) {
+                                console.error('❌ Detalles de validación:', errorJson.details);
+                            }
+
+                            // Detectar errores específicos
+                            if (errorJson.message && errorJson.message.includes('duplicate') || 
+                                errorJson.message && errorJson.message.includes('duplicado') ||
+                                errorJson.message && errorJson.message.includes('ya existe')) {
+                                messageEl.textContent = 'El DNI ya está registrado. Pruebe con otro número.';
+                                messageEl.style.color = config.COLORS.ERROR;
+                                return;
+                            }
+
+                            if (errorJson.message && errorJson.message.includes('validation') ||
+                                errorJson.message && errorJson.message.includes('validación')) {
+                                messageEl.textContent = 'Error de validación en los datos. Revise los campos.';
+                                messageEl.style.color = config.COLORS.ERROR;
+                                return;
+                            }
+                            
+                        } catch (e) {
+                            console.error('❌ Error no es JSON válido');
+                        }
+                        
+                        throw new Error(`${config.MESSAGES.ERROR_DETAIL} ${response.status} - ${errorData}`);
                     }
                 } catch (error) {
-                    console.error('Error al enviar el formulario:', error);
+                    console.error('❌ Error al enviar el formulario:', error);
                     messageEl.textContent = config.MESSAGES.ERROR;
                     messageEl.style.color = config.COLORS.ERROR;
                 } finally {

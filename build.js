@@ -4,7 +4,10 @@ require('dotenv').config();
 
 // Cargar variables de entorno
 const config = {
-    API_ENDPOINT: process.env.API_ENDPOINT || 'https://api.example.com/lead',
+    API_ENDPOINT: process.env.API_ENDPOINT || 'http://localhost:8081/api/v1/leads',
+    API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:8081/api/v1',
+    CLINICS_ENDPOINT: process.env.CLINICS_ENDPOINT || 'http://localhost:8081/api/v1/clinics',
+    SPECIALTIES_ENDPOINT: process.env.SPECIALTIES_ENDPOINT || 'http://localhost:8081/api/v1/medical-specialties',
     APP_NAME: process.env.APP_NAME || 'SGL Landing',
     APP_VERSION: process.env.APP_VERSION || '1.0.0',
     MIN_NAME_LENGTH: process.env.MIN_NAME_LENGTH || 3,
@@ -27,6 +30,8 @@ const config = {
 // Log de configuración para debug
 console.log('=== CONFIGURACIÓN CARGADA ===');
 console.log('API_ENDPOINT:', config.API_ENDPOINT);
+console.log('CLINICS_ENDPOINT:', config.CLINICS_ENDPOINT);
+console.log('SPECIALTIES_ENDPOINT:', config.SPECIALTIES_ENDPOINT);
 console.log('APP_NAME:', config.APP_NAME);
 console.log('PORT:', process.env.PORT || 3000);
 console.log('============================');
