@@ -4,10 +4,10 @@ require('dotenv').config();
 
 // Cargar variables de entorno
 const config = {
-    API_ENDPOINT: process.env.API_ENDPOINT || 'http://localhost:8081/api/v1/leads',
-    API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:8081/api/v1',
-    CLINICS_ENDPOINT: process.env.CLINICS_ENDPOINT || 'http://localhost:8081/api/v1/clinics',
-    SPECIALTIES_ENDPOINT: process.env.SPECIALTIES_ENDPOINT || 'http://localhost:8081/api/v1/medical-specialties',
+    API_ENDPOINT: process.env.API_ENDPOINT || 'https://loan-backend-develop.onrender.com/api/v1/leads',
+    API_BASE_URL: process.env.API_BASE_URL || 'https://loan-backend-develop.onrender.com/api/v1',
+    CLINICS_ENDPOINT: process.env.CLINICS_ENDPOINT || 'https://loan-backend-develop.onrender.com/api/v1/clinics',
+    SPECIALTIES_ENDPOINT: process.env.SPECIALTIES_ENDPOINT || 'https://loan-backend-develop.onrender.com/api/v1/medical-specialties',
     APP_NAME: process.env.APP_NAME || 'SGL Landing',
     APP_VERSION: process.env.APP_VERSION || '1.0.0',
     MIN_NAME_LENGTH: process.env.MIN_NAME_LENGTH || 3,
